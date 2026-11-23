@@ -197,6 +197,8 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
+  .pay-grid { grid-template-columns: 1fr; }
+  .pay-card.paypal { grid-row: auto; }
   .hero-grid, .welcome, .method, .cert { grid-template-columns: 1fr; }
   .hero-photo { order: -1; max-width: 520px; }
   .plans, .rules, .benefits { grid-template-columns: 1fr; }
@@ -230,6 +232,34 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
   .hero-cta .btn-ghost { display: none; }
   .gold, .steps li::before { background: none; color: var(--gold); -webkit-background-clip: border-box; background-clip: border-box; }
 }
+
+/* PAYMENTS */
+.pagos-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 32px; }
+.notice { display: flex; gap: 14px; align-items: flex-start; background: #1d160e; border: 1px solid var(--gold-lo); border-radius: 6px; padding: 16px 20px; margin-bottom: 22px; color: var(--text); font-size: 16px; }
+.notice b { color: var(--gold-hi); font-weight: 600; }
+.notice a { color: var(--gold-hi); }
+.pay-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 18px; }
+.pay-card { background: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; padding: 24px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.pay-card.paypal { grid-row: span 3; }
+.pay-card.paypal .field { margin-top: auto; }
+.pay-card h3 { font-size: 30px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.pay-card h3 small { font-family: var(--f-body); font-size: 12px; font-weight: 500; letter-spacing: .16em; color: var(--muted); }
+.pay-card p { margin: 0; color: var(--muted); font-size: 15px; }
+.pay-group { display: grid; gap: 8px; }
+.pay-group > span { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
+.amounts { display: flex; flex-wrap: wrap; gap: 8px; }
+.pay-link { display: inline-flex; align-items: baseline; gap: 6px; padding: 10px 16px; border: 1px solid var(--gold-lo); border-radius: 999px; text-decoration: none; font-weight: 500; font-size: 15px; transition: background .2s ease, border-color .2s ease; }
+.pay-link b { font-family: var(--f-display); font-weight: 800; font-size: 22px; line-height: 1; }
+.pay-link:hover { border-color: var(--gold); background: #23180d; }
+.pay-link.main { background: var(--gold-grad); color: #1a1007; border-color: transparent; font-weight: 600; }
+.field { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; min-width: 0; }
+.field div { min-width: 0; }
+.field small { display: block; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.field code { font-family: var(--f-body); font-size: 17px; color: var(--text); overflow-wrap: anywhere; user-select: all; }
+.copy { flex: none; font: 600 13px var(--f-body); letter-spacing: .06em; color: var(--gold-hi); background: transparent; border: 1px solid var(--gold-lo); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.copy:hover { border-color: var(--gold); }
+.copy.ok { color: #1a1007; background: var(--gold-grad); border-color: transparent; }
+@media (max-width: 900px) { .pay-grid { grid-template-columns: 1fr; } .pay-card.paypal { grid-row: auto; } }
 </style>
 
 <header class="hero">
@@ -488,6 +518,47 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
   </div>
 </section>
 
+<section class="band" id="pagos">
+  <div class="wrap">
+    <div class="pagos-head">
+      <div>
+        <p class="eyebrow">Formas de pago</p>
+        <h2>Reserva tu <span class="gold">cupo</span></h2>
+      </div>
+      <p class="lede" style="margin:0;max-width:46ch">Paga en dólares por PayPal, Binance o Zelle, o en bolívares por Pago Móvil.</p>
+    </div>
+    <div class="notice">
+      <span aria-hidden="true">✦</span>
+      <span><b>Antes de pagar, escríbeme por WhatsApp</b> para confirmar tu cupo. Después de pagar, envíame la captura del pago al <a href="https://wa.me/584241361092?text=Hola%20Vanessa%2C%20quiero%20confirmar%20mi%20cupo%20antes%20de%20pagar" target="_blank" rel="noopener">+58 424 136 1092</a>.</span>
+    </div>
+    <div class="pay-grid">
+      <article class="pay-card paypal">
+        <h3>PayPal <small>PAGO DIRECTO</small></h3>
+        <p>Toca el monto de tu plan y se abre PayPal con el pago listo.</p>
+        <div class="pay-group"><span>Asesoría mensual</span><div class="amounts"><a class="pay-link main" href="https://paypal.me/jvanessafit7/160USD" target="_blank" rel="noopener">1 mes <b>160$</b></a><a class="pay-link" href="https://paypal.me/jvanessafit7/290USD" target="_blank" rel="noopener">2 meses <b>290$</b></a><a class="pay-link" href="https://paypal.me/jvanessafit7/390USD" target="_blank" rel="noopener">3 meses <b>390$</b></a></div></div>
+        <div class="pay-group"><span>Posing</span><div class="amounts"><a class="pay-link" href="https://paypal.me/jvanessafit7/30USD" target="_blank" rel="noopener">1 clase <b>30$</b></a><a class="pay-link" href="https://paypal.me/jvanessafit7/75USD" target="_blank" rel="noopener">3 clases <b>75$</b></a><a class="pay-link" href="https://paypal.me/jvanessafit7/100USD" target="_blank" rel="noopener">5 clases <b>100$</b></a></div></div>
+        <div class="pay-group"><span>Plan para atletas</span><div class="amounts"><a class="pay-link" href="https://paypal.me/jvanessafit7/450USD" target="_blank" rel="noopener">3 meses <b>450$</b></a><a class="pay-link" href="https://paypal.me/jvanessafit7/750USD" target="_blank" rel="noopener">6 meses <b>750$</b></a></div></div>
+        <div class="field"><div><small>Otro monto</small><code>paypal.me/jvanessafit7</code></div><a class="copy" href="https://paypal.me/jvanessafit7" target="_blank" rel="noopener" style="text-decoration:none">Abrir</a></div>
+      </article>
+      <article class="pay-card">
+        <h3>Binance Pay <small>USDT</small></h3>
+        <div class="field"><div><small>Pay ID</small><code>1293621416</code></div><button class="copy" type="button" data-copy="1293621416">Copiar</button></div>
+        <div class="field"><div><small>Correo</small><code>jvanessafit@gmail.com</code></div><button class="copy" type="button" data-copy="jvanessafit@gmail.com">Copiar</button></div>
+      </article>
+      <article class="pay-card">
+        <h3>Zelle <small>USD</small></h3>
+        <div class="field"><div><small>Correo</small><code>Afanehbeautyfactory@gmail.com</code></div><button class="copy" type="button" data-copy="Afanehbeautyfactory@gmail.com">Copiar</button></div>
+        <div class="field"><div><small>A nombre de</small><code>AFANEH BEAUTY FACTORY LLC</code></div><button class="copy" type="button" data-copy="AFANEH BEAUTY FACTORY LLC">Copiar</button></div>
+      </article>
+      <article class="pay-card">
+        <h3>Pago Móvil <small>BOLÍVARES</small></h3>
+        <p>Banco Bancamiga. Te envío los datos completos por WhatsApp al confirmar tu cupo.</p>
+        <a class="pay-link" href="https://wa.me/584241361092?text=Hola%20Vanessa%2C%20quiero%20pagar%20en%20bol%C3%ADvares%20por%20Pago%20M%C3%B3vil.%20%C2%BFMe%20env%C3%ADas%20los%20datos%3F" target="_blank" rel="noopener">Pedir datos por WhatsApp</a>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section class="band contact page-break" id="contacto">
   <div class="wrap">
     <img class="logo" src="img/logo-vf.png" alt="">
@@ -505,8 +576,8 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
       <span>Email <b>Jvanessafit@gmail.com</b></span>
     </div>
     <div class="pay">
-      <span>Métodos de pago</span>
-      <span class="chip">Bolívares</span><span class="chip">PayPal</span><span class="chip">Zelle</span>
+      <span>Pagos</span>
+      <a class="chip" href="#pagos" style="text-decoration:none">PayPal</a><a class="chip" href="#pagos" style="text-decoration:none">Binance</a><a class="chip" href="#pagos" style="text-decoration:none">Zelle</a><a class="chip" href="#pagos" style="text-decoration:none">Pago Móvil</a>
     </div>
     <div class="sign">
       <p class="voice">Vanessa Azuaje</p>
@@ -518,4 +589,16 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
 <footer>
   <div class="wrap">Vanessa Fit · Precios en USD vigentes para 2027</div>
 </footer>
+
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var t = b.getAttribute('data-copy'), label = b.textContent;
+    function done() { b.textContent = 'Copiado'; b.classList.add('ok'); setTimeout(function () { b.textContent = label; b.classList.remove('ok'); }, 1600); }
+    function fallback() { var c = b.parentElement.querySelector('code'); var r = document.createRange(); r.selectNodeContents(c); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand('copy'); done(); } catch (e) {} }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(done, fallback); } else { fallback(); }
+  });
+});
+</script>
+
 </body></html>

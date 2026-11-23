@@ -203,15 +203,15 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
   .creds ul { grid-template-columns: 1fr 1fr; row-gap: 20px; }
   .creds li:nth-child(3) { border-left: 0; padding-left: 0; }
   .method-photo { position: static; order: -1; }
-  .method-photo img { aspect-ratio: 16/11; object-position: 50% 30%; }
+  .method-photo img { aspect-ratio: 4/5; object-position: 50% 25%; max-width: 520px; margin: 0 auto; }
   .gallery { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .welcome img { aspect-ratio: 16/12; object-position: 50% 25%; }
+  .welcome img { aspect-ratio: 4/5; object-position: 50% 20%; max-width: 520px; margin: 0 auto; }
   .includes { grid-template-columns: 1fr; }
 }
 @media (max-width: 520px) {
   body { font-size: 16px; }
   .svc { grid-template-columns: 1fr; }
-  .svc img { min-height: 0; aspect-ratio: 16/10; object-position: 50% 25%; }
+  .svc img { min-height: 0; height: auto; aspect-ratio: 4/5; object-position: var(--pos, 50% 20%); }
   .btn { width: 100%; justify-content: center; }
   .price { font-size: 60px; }
 }
@@ -322,7 +322,7 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
 
     <div class="extra">
       <article class="svc">
-        <img src="img/stage-side.jpg" alt="Vanessa posando en tarima, categoría Bikini Wellness">
+        <img src="img/stage-side.jpg" style="--pos: 50% 0%; object-position: var(--pos)" alt="Vanessa posando en tarima, categoría Bikini Wellness">
         <div class="svc-body">
           <p class="eyebrow" style="margin:0">Tarima</p>
           <h3>Asesoría de posing</h3>
@@ -335,7 +335,7 @@ footer { padding-block: 22px; text-align: center; color: var(--muted); font-size
         </div>
       </article>
       <article class="svc">
-        <img src="img/mundial.jpg" alt="Vanessa con el trofeo del Campeonato Mundial Wellness">
+        <img src="img/mundial.jpg" style="--pos: 50% 15%; object-position: var(--pos)" alt="Vanessa con el trofeo del Campeonato Mundial Wellness">
         <div class="svc-body">
           <p class="eyebrow" style="margin:0">Competencia</p>
           <h3>Plan para atletas</h3>

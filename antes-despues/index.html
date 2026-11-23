@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Antes y Después · Vanessa Fit</title>
+<meta name="description" content="Crea tu imagen de antes y después con el sello de Vanessa Fit: para publicación y para historia.">
+<meta property="og:title" content="Antes y Después · Vanessa Fit">
+<meta property="og:description" content="Sube tus fotos y descarga tu transformación lista para Instagram.">
+<meta property="og:image" content="https://vanessa-fit.github.io/img/og.jpg">
+<link rel="icon" href="../img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Jost:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap">
+<style>
+:root {
+  color-scheme: dark;
+  --ink: #0b0a09; --ink-2: #15120f; --ink-3: #1e1a16; --line: #3a3027;
+  --text: #f3ece4; --muted: #b5a899; --gold: #d9a35b; --gold-hi: #f6cf8e; --gold-lo: #8a5a2b;
+  --gold-grad: linear-gradient(100deg, #8a5a2b 0%, #d9a35b 35%, #f6cf8e 55%, #c48a46 80%, #8a5a2b 100%);
+  --f-display: "Big Shoulders Display", Impact, sans-serif;
+  --f-body: "Jost", "Futura", system-ui, sans-serif;
+  --f-voice: "Cormorant Garamond", Georgia, serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ink); color: var(--text); font-family: var(--f-body); -webkit-font-smoothing: antialiased; }
+body { padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 20px 16px 48px; }
+header.top { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+header.top img { width: 52px; }
+header.top h1 { margin: 0; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(30px, 6vw, 46px); line-height: .9; letter-spacing: .01em; }
+.gold { background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+header.top p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+.steps { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 18px; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
+.steps li { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; }
+.steps b { color: var(--gold-hi); font-weight: 600; margin-right: 4px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+@media (min-width: 900px) { .grid { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: start; } .preview { position: sticky; top: 16px; } }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.tab { flex: 1; appearance: none; border: 1px solid var(--line); background: var(--ink-2); color: var(--muted); font: 600 14px var(--f-body); letter-spacing: .08em; text-transform: uppercase; padding: 11px 8px; border-radius: 12px; cursor: pointer; }
+.tab[aria-selected="true"] { border-color: var(--gold); color: var(--ink); background: var(--gold-grad); }
+.stage { background: var(--ink-2); border: 1px solid var(--line); border-radius: 16px; padding: 10px; display: flex; justify-content: center; }
+#view { display: block; width: 100%; height: auto; max-height: 78vh; object-fit: contain; border-radius: 8px; touch-action: none; cursor: grab; }
+#view.story { width: auto; max-width: 100%; }
+.hint { color: var(--muted); font-size: 13px; margin: 8px 2px 0; text-align: center; }
+
+.panel { background: var(--ink-2); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
+.panel h2 { margin: 0 0 12px; font-family: var(--f-display); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 22px; }
+.panel h2 small { font-family: var(--f-body); font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); font-size: 13px; margin-left: 6px; }
+.photos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ph { border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 9px; }
+.ph .lbl { font: 600 12px var(--f-body); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.ph.after .lbl { color: var(--gold-hi); }
+.btn { appearance: none; border: 1px solid var(--gold-lo); background: var(--ink-3); color: var(--text); font: 500 15px var(--f-body); padding: 11px 12px; border-radius: 10px; cursor: pointer; text-align: center; }
+.btn:hover { border-color: var(--gold); }
+.btn.main { background: var(--gold-grad); color: var(--ink); border-color: transparent; font-weight: 600; letter-spacing: .04em; }
+.row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.row input[type=range] { flex: 1; min-width: 0; accent-color: var(--gold); }
+.row input[type=checkbox] { accent-color: var(--gold); width: 17px; height: 17px; }
+.blur-size[hidden] { display: none; }
+
+label.f { display: block; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+label.f input { display: block; width: 100%; margin-top: 5px; background: var(--ink); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; font: 400 16px var(--f-body); }
+label.f input:focus { outline: none; border-color: var(--gold); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chip { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--text); font: 500 13px var(--f-body); padding: 7px 12px; border-radius: 999px; cursor: pointer; }
+.chip:hover { border-color: var(--gold); color: var(--gold-hi); }
+
+.export { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.export .btn { padding: 15px 10px; font-size: 15px; }
+.export .btn span { display: block; font-size: 12px; font-weight: 400; opacity: .8; margin-top: 2px; letter-spacing: 0; }
+.note { color: var(--muted); font-size: 12.5px; margin: 10px 2px 0; line-height: 1.45; }
+@media (max-width: 420px) { .three { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="../img/logo-vf.png" alt="Vanessa Fit">
+    <div>
+      <h1>Antes <span class="gold">&amp; después</span></h1>
+      <p>Tu transformación, lista para Instagram.</p>
+    </div>
+  </header>
+  <ol class="steps">
+    <li><b>1</b>Sube tus 2 fotos</li>
+    <li><b>2</b>Ajusta y escribe tus datos</li>
+    <li><b>3</b>Descarga y envíalo a Vanessa</li>
+  </ol>
+
+  <div class="grid">
+    <section class="preview">
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" data-fmt="post" aria-selected="true">Publicación 4:5</button>
+        <button class="tab" role="tab" data-fmt="story" aria-selected="false">Historia 9:16</button>
+      </div>
+      <div class="stage"><canvas id="view" width="1080" height="1350"></canvas></div>
+      <p class="hint">Arrastra cada foto para encuadrarla · pellizca o usa el zoom</p>
+    </section>
+
+    <section>
+      <div class="panel">
+        <h2>Fotos</h2>
+        <div class="photos">
+          <div class="ph" data-side="before">
+            <span class="lbl">Antes</span>
+            <button class="btn main pick">Subir foto</button>
+            <div class="row">Zoom <input type="range" class="zoom" min="1" max="4" step="0.01" value="1"></div>
+            <label class="row"><input type="checkbox" class="blur"> Difuminar rostro</label>
+            <div class="row blur-size" hidden>Tamaño <input type="range" class="bsize" min="0.04" max="0.35" step="0.005" value="0.12"></div>
+          </div>
+          <div class="ph after" data-side="after">
+            <span class="lbl">Después</span>
+            <button class="btn main pick">Subir foto</button>
+            <div class="row">Zoom <input type="range" class="zoom" min="1" max="4" step="0.01" value="1"></div>
+            <label class="row"><input type="checkbox" class="blur"> Difuminar rostro</label>
+            <div class="row blur-size" hidden>Tamaño <input type="range" class="bsize" min="0.04" max="0.35" step="0.005" value="0.12"></div>
+          </div>
+        </div>
+        <p class="note">Con «Difuminar rostro» aparece un círculo borroso: arrástralo sobre la cara.</p>
+        <input type="file" id="file" accept="image/*" hidden>
+      </div>
+
+      <div class="panel">
+        <h2>Datos <small>todo es opcional</small></h2>
+        <div class="two">
+          <label class="f">Nombre <input id="name" maxlength="28" placeholder="Ej.: María"></label>
+          <label class="f">Tiempo <input id="time" maxlength="18" placeholder="Ej.: 12 semanas"></label>
+        </div>
+        <span class="row" style="margin-bottom:6px">Logros</span>
+        <div class="three">
+          <label class="f"><input class="stat" maxlength="16" placeholder="-8 kg"></label>
+          <label class="f"><input class="stat" maxlength="16" placeholder="-10 cm cintura"></label>
+          <label class="f"><input class="stat" maxlength="16" placeholder="+ energía"></label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Titular</h2>
+        <div class="presets">
+          <button class="chip" data-h="Confianza. Constancia.|Resultados.">Confianza. Constancia.</button>
+          <button class="chip" data-h="El cambio|es real.">El cambio es real</button>
+          <button class="chip" data-h="Disciplina hoy,|resultados mañana.">Disciplina hoy…</button>
+          <button class="chip" data-h="Mi transformación|con Vanessa Fit">Mi transformación</button>
+        </div>
+        <label class="f">Línea blanca <input id="h1" maxlength="34" value="Confianza. Constancia."></label>
+        <label class="f">Línea dorada <input id="h2" maxlength="34" value="Resultados."></label>
+      </div>
+
+      <div class="export">
+        <button class="btn main" data-out="post">Descargar publicación<span>1080 × 1350 · feed</span></button>
+        <button class="btn main" data-out="story">Descargar historia<span>1080 × 1920 · stories</span></button>
+      </div>
+      <p class="note">Las fotos no se suben a ningún servidor: todo se crea en tu teléfono. En el móvil se abre «Compartir» para guardarla en Fotos o enviarla por WhatsApp.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const W = 1080;
+  const FMT = {
+    post:  { H: 1350, M: 60, logoY: 54, logoH: 72, headTop: 168, head: 100, gap: 92, pTop: 378, pBot: 1150, seal: 62, rowY: 1218, lineY: 1262, footY: 1302, cta: false },
+    story: { H: 1920, M: 64, logoY: 150, logoH: 84, headTop: 278, head: 128, gap: 116, pTop: 548, pBot: 1478, seal: 74, rowY: 1560, lineY: 1612, footY: 1660, cta: true },
+  };
+  const G = { ink: "#0b0a09", ink2: "#15120f", line: "#3a3027", text: "#f3ece4", muted: "#b5a899", gold: "#d9a35b", hi: "#f6cf8e", lo: "#8a5a2b" };
+  const F = { disp: '"Big Shoulders Display", Impact, sans-serif', body: '"Jost", "Futura", sans-serif', voice: '"Cormorant Garamond", Georgia, serif' };
+
+  const photos = { before: newPhoto(), after: newPhoto() };
+  function newPhoto() { return { img: null, fx: 0.5, fy: 0.42, zoom: 1, blur: false, bx: 0.5, by: 0.15, br: 0.12 }; }
+
+  const logo = new Image();
+  logo.src = "../img/logo-vf.png";
+
+  const $ = s => document.querySelector(s);
+  const view = $("#view"), vctx = view.getContext("2d");
+  let fmt = "post";
+  const fields = { name: $("#name"), time: $("#time"), h1: $("#h1"), h2: $("#h2") };
+  const stats = [...document.querySelectorAll(".stat")];
+
+  // ---------- persistence of text (per viewer) ----------
+  const KEY = "vf-antes-despues";
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || "null");
+    if (saved) {
+      for (const k in fields) if (typeof saved[k] === "string") fields[k].value = saved[k];
+      (saved.stats || []).forEach((v, i) => { if (stats[i]) stats[i].value = v; });
+    }
+  } catch (e) {}
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify({ name: fields.name.value, time: fields.time.value, h1: fields.h1.value, h2: fields.h2.value, stats: stats.map(s => s.value) })); } catch (e) {}
+  }
+
+  // ---------- helpers ----------
+  function goldGrad(ctx, x0, x1, y) {
+    const g = ctx.createLinearGradient(x0, y, x1, y);
+    g.addColorStop(0, "#8a5a2b"); g.addColorStop(.35, "#d9a35b"); g.addColorStop(.55, "#f6cf8e"); g.addColorStop(.8, "#c48a46"); g.addColorStop(1, "#8a5a2b");
+    return g;
+  }
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function spacedWidth(ctx, t, sp) { let w = 0; for (const ch of t) w += ctx.measureText(ch).width + sp; return w - (t.length ? sp : 0); }
+  function spaced(ctx, t, x, y, sp, align = "left") {
+    const w = spacedWidth(ctx, t, sp);
+    let cx = align === "center" ? x - w / 2 : align === "right" ? x - w : x;
+    const a = ctx.textAlign; ctx.textAlign = "left";
+    for (const ch of t) { ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; }
+    ctx.textAlign = a; return w;
+  }
+  function fit(ctx, t, font, size, maxW, sp = 0) {
+    let s = size;
+    do { ctx.font = font.replace("{s}", s); if (spacedWidth(ctx, t, sp * s) <= maxW) break; s -= 2; } while (s > 10);
+    return s;
+  }
+
+  // Where the photo sits inside a panel (cover-fit × zoom, focus point clamped so it always fills).
+  function placement(p, x, y, w, h) {
+    const iw = p.img.width, ih = p.img.height;
+    const s = Math.max(w / iw, h / ih) * p.zoom;
+    const dw = iw * s, dh = ih * s;
+    let dx = x + w / 2 - p.fx * dw, dy = y + h / 2 - p.fy * dh;
+    dx = Math.min(x, Math.max(x + w - dw, dx));
+    dy = Math.min(y, Math.max(y + h - dh, dy));
+    return { s, dx, dy, dw, dh };
+  }
+
+  let filterOK = null;
+  function drawBlurSpot(ctx, p, pl, clip) {
+    const cx = pl.dx + p.bx * pl.dw, cy = pl.dy + p.by * pl.dh, r = p.br * pl.dw;
+    ctx.save();
+    clip(); ctx.clip();
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+    if (filterOK === null) { const t = document.createElement("canvas").getContext("2d"); t.filter = "blur(2px)"; filterOK = t.filter === "blur(2px)"; }
+    if (filterOK) {
+      ctx.filter = `blur(${Math.max(8, r * 0.28)}px)`;
+      ctx.drawImage(p.img, pl.dx, pl.dy, pl.dw, pl.dh);
+      ctx.filter = "none";
+    } else {
+      // Fallback: shrink the face area to a few pixels and stretch it back — a soft, unreadable smear.
+      const sx = (cx - r - pl.dx) / pl.s, sy = (cy - r - pl.dy) / pl.s, sw = (2 * r) / pl.s;
+      const t = document.createElement("canvas"); t.width = t.height = 9;
+      t.getContext("2d").drawImage(p.img, sx, sy, sw, sw, 0, 0, 9, 9);
+      ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(t, cx - r, cy - r, 2 * r, 2 * r);
+    }
+    ctx.restore();
+  }
+
+  function panels(L) {
+    const gap = 18, pw = (W - 2 * L.M - gap) / 2, ph = L.pBot - L.pTop;
+    return { before: { x: L.M, y: L.pTop, w: pw, h: ph }, after: { x: L.M + pw + gap, y: L.pTop, w: pw, h: ph } };
+  }
+
+  // ---------- the artwork ----------
+  function render(ctx, which, opts = {}) {
+    const L = FMT[which], H = L.H, M = L.M;
+    ctx.save();
+    ctx.fillStyle = G.ink; ctx.fillRect(0, 0, W, H);
+
+    // warm stage light from the top-right
+    let rg = ctx.createRadialGradient(W * .82, H * .04, 0, W * .82, H * .04, W * .95);
+    rg.addColorStop(0, "rgba(217,163,91,.20)"); rg.addColorStop(1, "rgba(217,163,91,0)");
+    ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+
+    // giant faint VF behind the headline
+    if (logo.complete && logo.naturalWidth) {
+      const lh = L.head * 3.1, lw = lh * logo.naturalWidth / logo.naturalHeight;
+      ctx.globalAlpha = .06; ctx.drawImage(logo, W - lw * .78, L.headTop - lh * .28, lw, lh); ctx.globalAlpha = 1;
+    }
+    // gold slashes on the right edge
+    ctx.save();
+    ctx.strokeStyle = goldGrad(ctx, W - 160, W, 0); ctx.lineCap = "round";
+    [[0, 10], [44, 4]].forEach(([off, lw]) => { ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(W - 40 - off, L.headTop - 24); ctx.lineTo(W + 60 - off, L.headTop - 214); ctx.stroke(); });
+    ctx.restore();
+
+    // header: logo | name + title
+    let x = M;
+    if (logo.complete && logo.naturalWidth) {
+      const lw = L.logoH * logo.naturalWidth / logo.naturalHeight;
+      ctx.drawImage(logo, x, L.logoY, lw, L.logoH); x += lw + 24;
+    }
+    ctx.fillStyle = G.lo; ctx.fillRect(x, L.logoY + 6, 2, L.logoH - 12); x += 24;
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = G.text; ctx.font = `600 ${Math.round(L.logoH * .38)}px ${F.body}`;
+    spaced(ctx, "VANESSA AZUAJE", x, L.logoY + L.logoH * .48, L.logoH * .09);
+    ctx.fillStyle = G.muted; ctx.font = `500 ${Math.round(L.logoH * .23)}px ${F.body}`;
+    spaced(ctx, "IFBB WELLNESS PRO · TRICAMPEONA MUNDIAL", x, L.logoY + L.logoH * .9, L.logoH * .045);
+
+    // headline
+    const maxW = W - 2 * M;
+    const h1 = (fields.h1.value || "").toUpperCase(), h2 = (fields.h2.value || "").toUpperCase();
+    const size = Math.min(fit(ctx, h1, `900 {s}px ${F.disp}`, L.head, maxW, .004), fit(ctx, h2, `900 {s}px ${F.disp}`, L.head, maxW, .004));
+    ctx.font = `900 ${size}px ${F.disp}`;
+    const b1 = L.headTop + size * .86, b2 = b1 + Math.max(L.gap * size / L.head, size * .9);
+    ctx.fillStyle = G.text; spaced(ctx, h1, M, b1, size * .004);
+    ctx.fillStyle = goldGrad(ctx, M, M + spacedWidth(ctx, h2, size * .004), 0); spaced(ctx, h2, M, b2, size * .004);
+
+    // photos
+    const P = panels(L);
+    for (const side of ["before", "after"]) {
+      const r = P[side], p = photos[side], clip = () => rr(ctx, r.x, r.y, r.w, r.h, 20);
+      ctx.save(); clip(); ctx.clip();
+      ctx.fillStyle = G.ink2; ctx.fillRect(r.x, r.y, r.w, r.h);
+      if (p.img) {
+        const pl = placement(p, r.x, r.y, r.w, r.h);
+        ctx.drawImage(p.img, pl.dx, pl.dy, pl.dw, pl.dh);
+        ctx.restore();
+        if (p.blur) {
+          drawBlurSpot(ctx, p, pl, clip);
+          if (opts.guides) {
+            ctx.save(); clip(); ctx.clip();
+            ctx.setLineDash([10, 8]); ctx.lineWidth = 3; ctx.strokeStyle = "rgba(246,207,142,.85)";
+            ctx.beginPath(); ctx.arc(pl.dx + p.bx * pl.dw, pl.dy + p.by * pl.dh, p.br * pl.dw, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+          }
+        }
+        ctx.save(); clip(); ctx.clip();
+      } else {
+        ctx.strokeStyle = "rgba(217,163,91,.45)"; ctx.setLineDash([14, 12]); ctx.lineWidth = 3;
+        rr(ctx, r.x + 14, r.y + 14, r.w - 28, r.h - 28, 14); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = G.muted; ctx.textAlign = "center";
+        ctx.font = `500 ${L.cta ? 34 : 30}px ${F.body}`; ctx.fillText(opts.guides ? "Toca para subir" : "", r.x + r.w / 2, r.y + r.h / 2);
+        ctx.font = `900 ${L.cta ? 64 : 56}px ${F.disp}`; ctx.fillStyle = "rgba(217,163,91,.55)";
+        ctx.fillText(side === "before" ? "ANTES" : "DESPUÉS", r.x + r.w / 2, r.y + r.h / 2 - 50);
+        ctx.textAlign = "left";
+      }
+      // bottom shade so the seal reads
+      const sh = ctx.createLinearGradient(0, r.y + r.h * .72, 0, r.y + r.h);
+      sh.addColorStop(0, "rgba(11,10,9,0)"); sh.addColorStop(1, "rgba(11,10,9,.65)");
+      ctx.fillStyle = sh; ctx.fillRect(r.x, r.y, r.w, r.h);
+      ctx.restore();
+
+      // frame
+      rr(ctx, r.x, r.y, r.w, r.h, 20);
+      if (side === "after") { ctx.lineWidth = 4; ctx.strokeStyle = goldGrad(ctx, r.x, r.x + r.w, 0); }
+      else { ctx.lineWidth = 2; ctx.strokeStyle = G.line; }
+      ctx.stroke();
+
+      // label chip
+      const lab = side === "before" ? "ANTES" : "DESPUÉS", fs = L.cta ? 30 : 26;
+      ctx.font = `600 ${fs}px ${F.body}`;
+      const tw = spacedWidth(ctx, lab, fs * .22), cw = tw + fs * 1.3, ch = fs * 1.75, cx = r.x + 18, cy = r.y + 18;
+      rr(ctx, cx, cy, cw, ch, 8);
+      if (side === "after") { ctx.fillStyle = goldGrad(ctx, cx, cx + cw, 0); ctx.fill(); ctx.fillStyle = G.ink; }
+      else { ctx.fillStyle = "rgba(11,10,9,.82)"; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = G.lo; ctx.stroke(); ctx.fillStyle = G.text; }
+      spaced(ctx, lab, cx + fs * .65, cy + ch * .68, fs * .22);
+    }
+
+    // seal between the photos: time, or the VF mark
+    const sx = W / 2, sy = L.pBot, sr = L.seal;
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.6)"; ctx.shadowBlur = 24;
+    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fillStyle = G.ink; ctx.fill();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.lineWidth = 4; ctx.strokeStyle = goldGrad(ctx, sx - sr, sx + sr, 0); ctx.stroke();
+    ctx.beginPath(); ctx.arc(sx, sy, sr - 9, 0, Math.PI * 2); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(138,90,43,.8)"; ctx.stroke();
+    const time = (fields.time.value || "").trim();
+    const m = time.match(/^(\d+[.,]?\d*)\s*(.*)$/);
+    ctx.textAlign = "center";
+    if (m) {
+      const num = m[1], unit = (m[2] || "").toUpperCase();
+      const ns = fit(ctx, num, `900 {s}px ${F.disp}`, Math.round(sr * 1.05), sr * 1.4);
+      ctx.font = `900 ${ns}px ${F.disp}`; ctx.fillStyle = goldGrad(ctx, sx - sr, sx + sr, 0);
+      ctx.fillText(num, sx, sy + (unit ? ns * .22 : ns * .36));
+      if (unit) { const us = fit(ctx, unit, `600 {s}px ${F.body}`, Math.round(sr * .26), sr * 1.45, .12); ctx.font = `600 ${us}px ${F.body}`; ctx.fillStyle = G.text; spaced(ctx, unit, sx, sy + ns * .22 + us * 1.35, us * .12, "center"); }
+    } else if (time) {
+      const ts = fit(ctx, time.toUpperCase(), `800 {s}px ${F.disp}`, Math.round(sr * .5), sr * 1.5);
+      ctx.font = `800 ${ts}px ${F.disp}`; ctx.fillStyle = goldGrad(ctx, sx - sr, sx + sr, 0); ctx.fillText(time.toUpperCase(), sx, sy + ts * .35);
+    } else if (logo.complete && logo.naturalWidth) {
+      const lh = sr * .95, lw = lh * logo.naturalWidth / logo.naturalHeight; ctx.drawImage(logo, sx - lw / 2, sy - lh / 2, lw, lh);
+    }
+    ctx.textAlign = "left";
+
+    // info row: name (or Vanessa's line) left · achievements right
+    const half = W / 2 - sr - 22 - M;
+    const name = (fields.name.value || "").trim();
+    const voice = name || "Transforma tu cuerpo y tu mente.";
+    const vs = fit(ctx, voice, `italic 600 {s}px ${F.voice}`, name ? (L.cta ? 64 : 54) : (L.cta ? 40 : 34), half);
+    ctx.font = `italic 600 ${vs}px ${F.voice}`; ctx.fillStyle = G.hi;
+    ctx.fillText(voice, M, L.rowY + vs * .3);
+
+    const list = stats.map(s => s.value.trim()).filter(Boolean);
+    if (list.length) {
+      let fs = L.cta ? 28 : 24, total;
+      const measure = () => { ctx.font = `600 ${fs}px ${F.body}`; return list.reduce((a, t) => a + ctx.measureText(t).width + fs * 1.3, 0) + (list.length - 1) * 10; };
+      while ((total = measure()) > half && fs > 14) fs -= 1;
+      const stacked = total > half;
+      let cx = W - M, cy = L.rowY - fs * .9;
+      if (stacked) { cy = L.rowY - fs * .9 - (list.length - 1) * fs * 1.05; }
+      for (const t of list.slice().reverse()) {
+        const w = ctx.measureText(t).width + fs * 1.3, h = fs * 1.8;
+        const px = stacked ? W - M - w : cx - w;
+        rr(ctx, px, cy, w, h, h / 2); ctx.fillStyle = "rgba(217,163,91,.08)"; ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = G.lo; ctx.stroke();
+        ctx.fillStyle = G.hi; ctx.fillText(t, px + fs * .65, cy + h * .66);
+        if (stacked) cy += h + 8; else cx = px - 10;
+      }
+    }
+
+    // footer
+    ctx.fillStyle = goldGrad(ctx, M, W - M, 0); ctx.fillRect(M, L.lineY, W - 2 * M, 2);
+    ctx.fillStyle = G.muted; ctx.font = `500 ${L.cta ? 24 : 20}px ${F.body}`;
+    const foot = "ENTRENAMIENTO  ·  NUTRICIÓN  ·  SEGUIMIENTO  ·  POSING";
+    if (L.cta) {
+      spaced(ctx, foot, W / 2, L.footY, 4, "center");
+      const ct = "ASESORÍA ONLINE 2027 · ESCRÍBEME";
+      ctx.font = `800 40px ${F.disp}`;
+      const cw = spacedWidth(ctx, ct, 3) + 70, ch = 76, cx = (W - cw) / 2, cy = L.footY + 34;
+      rr(ctx, cx, cy, cw, ch, ch / 2); ctx.fillStyle = goldGrad(ctx, cx, cx + cw, 0); ctx.fill();
+      ctx.fillStyle = G.ink; spaced(ctx, ct, W / 2, cy + ch * .67, 3, "center");
+    } else {
+      spaced(ctx, foot, M, L.footY, 3);
+      ctx.fillStyle = G.gold; ctx.font = `600 20px ${F.body}`; spaced(ctx, "VANESSA FIT", W - M, L.footY, 4, "right");
+    }
+    ctx.restore();
+  }
+
+  // ---------- preview ----------
+  let raf = 0;
+  function draw() { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => render(vctx, fmt, { guides: true })); }
+  function setFmt(f) {
+    fmt = f; view.width = W; view.height = FMT[f].H; view.classList.toggle("story", f === "story");
+    document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.fmt === f));
+    draw();
+  }
+  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => setFmt(t.dataset.fmt)));
+
+  // ---------- photo loading ----------
+  const fileIn = $("#file"); let pickFor = "before";
+  function pick(side) { pickFor = side; fileIn.value = ""; fileIn.click(); }
+  document.querySelectorAll(".ph").forEach(box => {
+    const side = box.dataset.side, p = photos[side];
+    box.querySelector(".pick").addEventListener("click", () => pick(side));
+    box.querySelector(".zoom").addEventListener("input", e => { p.zoom = +e.target.value; draw(); });
+    box.querySelector(".blur").addEventListener("change", e => { p.blur = e.target.checked; box.querySelector(".blur-size").hidden = !p.blur; draw(); });
+    box.querySelector(".bsize").addEventListener("input", e => { p.br = +e.target.value; draw(); });
+  });
+  fileIn.addEventListener("change", () => {
+    const f = fileIn.files && fileIn.files[0]; if (!f) return;
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => {
+      // keep memory sane on phones: cap the long side at 2400px
+      const k = Math.min(1, 2400 / Math.max(im.naturalWidth, im.naturalHeight));
+      const c = document.createElement("canvas"); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      Object.assign(photos[pickFor], { img: c, fx: .5, fy: .42, zoom: 1 });
+      const box = document.querySelector(`.ph[data-side="${pickFor}"]`);
+      box.querySelector(".zoom").value = 1; box.querySelector(".pick").textContent = "Cambiar foto";
+      draw();
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); alert("No se pudo abrir esta imagen. Prueba con otra foto (JPG o PNG)."); };
+    im.src = url;
+  });
+
+  // ---------- drag / pinch on the preview ----------
+  const pts = new Map(); let drag = null;
+  function toCanvas(e) { const b = view.getBoundingClientRect(); return { x: (e.clientX - b.left) * view.width / b.width, y: (e.clientY - b.top) * view.height / b.height }; }
+  function hit(pt) { const P = panels(FMT[fmt]); for (const s in P) { const r = P[s]; if (pt.x >= r.x && pt.x <= r.x + r.w && pt.y >= r.y && pt.y <= r.y + r.h) return s; } return null; }
+  view.addEventListener("pointerdown", e => {
+    const pt = toCanvas(e), side = hit(pt);
+    if (!side) return;
+    const p = photos[side];
+    if (!p.img) { pick(side); return; }
+    view.setPointerCapture(e.pointerId); pts.set(e.pointerId, pt);
+    if (pts.size === 1) {
+      const r = panels(FMT[fmt])[side], pl = placement(p, r.x, r.y, r.w, r.h);
+      const onBlur = p.blur && Math.hypot(pt.x - (pl.dx + p.bx * pl.dw), pt.y - (pl.dy + p.by * pl.dh)) <= p.br * pl.dw * 1.1;
+      drag = { side, mode: onBlur ? "blur" : "pan", last: pt, pinch: 0 };
+    }
+    e.preventDefault();
+  });
+  view.addEventListener("pointermove", e => {
+    if (!drag || !pts.has(e.pointerId)) return;
+    const pt = toCanvas(e); pts.set(e.pointerId, pt);
+    const p = photos[drag.side], r = panels(FMT[fmt])[drag.side];
+    if (pts.size >= 2) {
+      const [a, b] = [...pts.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (drag.pinch) { p.zoom = Math.min(4, Math.max(1, p.zoom * d / drag.pinch)); document.querySelector(`.ph[data-side="${drag.side}"] .zoom`).value = p.zoom; }
+      drag.pinch = d; draw(); return;
+    }
+    const pl = placement(p, r.x, r.y, r.w, r.h), dx = pt.x - drag.last.x, dy = pt.y - drag.last.y;
+    drag.last = pt;
+    if (drag.mode === "blur") {
+      p.bx = Math.min(1, Math.max(0, p.bx + dx / pl.dw)); p.by = Math.min(1, Math.max(0, p.by + dy / pl.dh));
+    } else {
+      // move the focus point, then clamp it to what can actually be shown
+      const cx = (r.x + r.w / 2 - pl.dx) / pl.dw, cy = (r.y + r.h / 2 - pl.dy) / pl.dh;
+      const hx = r.w / 2 / pl.dw, hy = r.h / 2 / pl.dh;
+      p.fx = Math.min(1 - hx, Math.max(hx, cx - dx / pl.dw)); p.fy = Math.min(1 - hy, Math.max(hy, cy - dy / pl.dh));
+    }
+    draw();
+  });
+  const end = e => { pts.delete(e.pointerId); if (pts.size < 2 && drag) drag.pinch = 0; if (!pts.size) drag = null; else if (drag) drag.last = [...pts.values()][0]; };
+  view.addEventListener("pointerup", end); view.addEventListener("pointercancel", end);
+  view.addEventListener("wheel", e => {
+    const side = hit(toCanvas(e)); if (!side || !photos[side].img) return;
+    e.preventDefault(); const p = photos[side];
+    p.zoom = Math.min(4, Math.max(1, p.zoom * (e.deltaY < 0 ? 1.06 : 1 / 1.06)));
+    document.querySelector(`.ph[data-side="${side}"] .zoom`).value = p.zoom; draw();
+  }, { passive: false });
+
+  // ---------- text inputs ----------
+  [...Object.values(fields), ...stats].forEach(i => i.addEventListener("input", () => { save(); draw(); }));
+  document.querySelectorAll(".presets .chip").forEach(b => b.addEventListener("click", () => {
+    const [a, c] = b.dataset.h.split("|"); fields.h1.value = a; fields.h2.value = c; save(); draw();
+  }));
+
+  // ---------- export ----------
+  document.querySelectorAll("[data-out]").forEach(btn => btn.addEventListener("click", async () => {
+    if (!photos.before.img || !photos.after.img) { alert("Primero sube las dos fotos: ANTES y DESPUÉS."); return; }
+    const which = btn.dataset.out, c = document.createElement("canvas");
+    c.width = W; c.height = FMT[which].H; render(c.getContext("2d"), which);
+    const blob = await new Promise(r => c.toBlob(r, "image/jpeg", .93));
+    const slug = (fields.name.value || "").trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const fname = `VF-antes-despues-${which === "post" ? "publicacion" : "historia"}${slug ? "-" + slug : ""}.jpg`;
+    const file = new File([blob], fname, { type: "image/jpeg" });
+    const touch = matchMedia("(pointer: coarse)").matches;
+    if (touch && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "Antes y después · Vanessa Fit" }); return; }
+      catch (e) { if (e && e.name === "AbortError") return; }
+    }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fname;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }));
+
+  // ---------- start ----------
+  logo.onload = draw;
+  Promise.all([
+    document.fonts.load(`900 100px "Big Shoulders Display"`), document.fonts.load(`800 40px "Big Shoulders Display"`),
+    document.fonts.load(`600 20px "Jost"`), document.fonts.load(`500 20px "Jost"`),
+    document.fonts.load(`italic 600 40px "Cormorant Garamond"`),
+  ]).catch(() => {}).finally(draw);
+  setFmt("post");
+})();
+</script>
+</body>
+</html>

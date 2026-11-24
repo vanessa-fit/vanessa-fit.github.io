@@ -50,15 +50,22 @@ header.top p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
 .panel { background: var(--ink-2); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 14px; }
 .panel h2 { margin: 0 0 12px; font-family: var(--f-display); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 22px; }
 .panel h2 small { font-family: var(--f-body); font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); font-size: 13px; margin-left: 6px; }
-.photos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.ph { border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 9px; }
+.photos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.ph { min-width: 0; border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 9px; }
 .ph .lbl { font: 600 12px var(--f-body); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
 .ph.after .lbl { color: var(--gold-hi); }
 .btn { appearance: none; border: 1px solid var(--gold-lo); background: var(--ink-3); color: var(--text); font: 500 15px var(--f-body); padding: 11px 12px; border-radius: 10px; cursor: pointer; text-align: center; }
 .btn:hover { border-color: var(--gold); }
 .btn.main { background: var(--gold-grad); color: var(--ink); border-color: transparent; font-weight: 600; letter-spacing: .04em; }
 .row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
-.row input[type=range] { flex: 1; min-width: 0; accent-color: var(--gold); }
+.row input[type=range] { flex: 1; min-width: 0; width: 100%; accent-color: var(--gold); }
+.two > *, .three > * { min-width: 0; }
+.sheet { position: fixed; inset: 0; z-index: 50; background: rgba(11,10,9,.94); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); }
+.sheet[hidden] { display: none; }
+.sheet img { max-width: 100%; max-height: 62vh; border-radius: 10px; border: 1px solid var(--line); -webkit-touch-callout: default; }
+.sheet p { margin: 0; color: var(--text); text-align: center; font-size: 15px; line-height: 1.4; max-width: 420px; }
+.sheet .acts .btn { text-decoration: none; }
+.sheet .acts { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 .row input[type=checkbox] { accent-color: var(--gold); width: 17px; height: 17px; }
 .blur-size[hidden] { display: none; }
 
@@ -158,6 +165,16 @@ label.f input:focus { outline: none; border-color: var(--gold); }
       </div>
       <p class="note">Las fotos no se suben a ningún servidor: todo se crea en tu teléfono. En el móvil se abre «Compartir» para guardarla en Fotos o enviarla por WhatsApp.</p>
     </section>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <img id="sheetImg" alt="Tu antes y después">
+  <p id="sheetMsg">Mantén presionada la imagen y elige «Guardar en Fotos».</p>
+  <div class="acts">
+    <button class="btn main" id="sheetShare">Compartir / Guardar</button>
+    <a class="btn" id="sheetDl" download>Descargar</a>
+    <button class="btn" id="sheetClose">Cerrar</button>
   </div>
 </div>
 
@@ -467,7 +484,8 @@ label.f input:focus { outline: none; border-color: var(--gold); }
     const pt = toCanvas(e), side = hit(pt);
     if (!side) return;
     const p = photos[side];
-    if (!p.img) { pick(side); return; }
+    // empty panel: the file picker opens on "click" (phones only allow it from a full tap, not from pointerdown)
+    if (!p.img) return;
     view.setPointerCapture(e.pointerId); pts.set(e.pointerId, pt);
     if (pts.size === 1) {
       const r = panels(FMT[fmt])[side], pl = placement(p, r.x, r.y, r.w, r.h);
@@ -499,6 +517,7 @@ label.f input:focus { outline: none; border-color: var(--gold); }
   });
   const end = e => { pts.delete(e.pointerId); if (pts.size < 2 && drag) drag.pinch = 0; if (!pts.size) drag = null; else if (drag) drag.last = [...pts.values()][0]; };
   view.addEventListener("pointerup", end); view.addEventListener("pointercancel", end);
+  view.addEventListener("click", e => { const side = hit(toCanvas(e)); if (side && !photos[side].img) pick(side); });
   view.addEventListener("wheel", e => {
     const side = hit(toCanvas(e)); if (!side || !photos[side].img) return;
     e.preventDefault(); const p = photos[side];
@@ -522,13 +541,31 @@ label.f input:focus { outline: none; border-color: var(--gold); }
     const fname = `VF-antes-despues-${which === "post" ? "publicacion" : "historia"}${slug ? "-" + slug : ""}.jpg`;
     const file = new File([blob], fname, { type: "image/jpeg" });
     const touch = matchMedia("(pointer: coarse)").matches;
-    if (touch && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: "Antes y después · Vanessa Fit" }); return; }
-      catch (e) { if (e && e.name === "AbortError") return; }
+    if (!touch) {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fname;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      return;
     }
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = fname;
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    // Phones: show the finished image. From here "Compartir" runs straight from a tap (Safari blocks share()
+    // after the async render), and inside Instagram / Telegram, where neither share nor download work,
+    // she can still long-press the image to save it.
+    openSheet(file, blob);
   }));
+
+  const sheet = $("#sheet"), sheetImg = $("#sheetImg"), sheetShare = $("#sheetShare"), sheetDl = $("#sheetDl");
+  let sheetFile = null, sheetUrl = "";
+  function openSheet(file, blob) {
+    if (sheetUrl) URL.revokeObjectURL(sheetUrl);
+    sheetFile = file; sheetUrl = URL.createObjectURL(blob);
+    sheetImg.src = sheetUrl; sheetDl.href = sheetUrl; sheetDl.download = file.name;
+    sheetShare.hidden = !(navigator.canShare && navigator.canShare({ files: [file] }));
+    sheet.hidden = false;
+  }
+  sheetShare.addEventListener("click", async () => {
+    try { await navigator.share({ files: [sheetFile], title: "Antes y después · Vanessa Fit" }); }
+    catch (e) { if (!e || e.name !== "AbortError") sheetShare.hidden = true; }
+  });
+  $("#sheetClose").addEventListener("click", () => { sheet.hidden = true; });
 
   // ---------- start ----------
   logo.onload = draw;
